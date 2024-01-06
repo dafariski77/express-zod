@@ -1,0 +1,64 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String         @id @default(uuid())
+  fullName      String
+  email         String         @unique
+  password      String
+  isVerified    Boolean        @default(false)
+  otp           Int?
+  roleId        String
+  createdAt     DateTime       @default(now())
+  role          Role           @relation(fields: [roleId], references: [id])
+  userRooms     UserRoom[]
+  chats         Chat[]
+  refreshTokens RefreshToken[]
+}
+
+model UserRoom {
+  id     String @id @default(uuid())
+  userId String
+  roomId String
+  users  User   @relation(fields: [userId], references: [id])
+  rooms  Room   @relation(fields: [roomId], references: [id])
+}
+
+model Room {
+  id        String     @id @default(uuid())
+  name      String
+  chats     Chat[]
+  userRooms UserRoom[]
+}
+
+model Chat {
+  id        String   @id @default(uuid())
+  message   String
+  roomId    String
+  userId    String
+  room      Room     @relation(fields: [roomId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model RefreshToken {
+  id           String @id @default(uuid())
+  refreshToken String
+  userId       String
+  user         User   @relation(fields: [userId], references: [id])
+}
+
+model Role {
+  id   String @id @default(uuid())
+  name String
+  User User[]
+}
