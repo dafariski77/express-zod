@@ -10,6 +10,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Role {
+  id   String @id @default(uuid())
+  name String
+  User User[]
+}
+
 model User {
   id            String         @id @default(uuid())
   fullName      String
@@ -55,10 +61,4 @@ model RefreshToken {
   refreshToken String
   userId       String
   user         User   @relation(fields: [userId], references: [id])
-}
-
-model Role {
-  id   String @id @default(uuid())
-  name String
-  User User[]
 }
