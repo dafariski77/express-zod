@@ -14,6 +14,9 @@ export const loginService = async (data) => {
     where: {
       email,
     },
+    include: {
+      role: true,
+    },
   });
 
   if (!user) {
@@ -43,7 +46,7 @@ export const loginService = async (data) => {
 };
 
 export const registerService = async (data) => {
-  const { fullName, email, password, passwordConfirmation, roleId } = data;
+  const { fullName, email, password, passwordConfirmation } = data;
 
   if (password != passwordConfirmation) {
     throw new BadRequetError("Password not match!");
@@ -51,12 +54,19 @@ export const registerService = async (data) => {
 
   const hashPassword = await encrypt(password);
 
+  const role = await prisma.role.findFirst({
+    where: {
+      name: "user",
+    },
+  });
+
   const user = await prisma.user.create({
     data: {
       fullName,
       email,
       password: hashPassword,
       otp: generateOtpNumber(),
+      roleId: role.id,
     },
     select: {
       id: true,
@@ -104,4 +114,10 @@ export const verifyService = async (data) => {
   });
 
   return;
+};
+
+export const getUserInfo = async (req) => {
+  const user = req.user;
+
+  return user;
 };
