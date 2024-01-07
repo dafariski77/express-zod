@@ -7,7 +7,7 @@ import {
   registerService,
   verifyService,
 } from "./user.service.js";
-import { authenticateUser, authorizeRoles } from "../../../middlewares/auth.js";
+import { authenticateUser } from "../../../middlewares/auth.js";
 
 const route = express.Router();
 
@@ -17,7 +17,7 @@ route.post("/login", validate(loginSchema), async (req, res, next) => {
 
     return res
       .json({
-        status: "success",
+        success: true,
         message: "Login success",
         data: user,
       })
@@ -33,7 +33,7 @@ route.post("/register", validate(registerSchema), async (req, res, next) => {
 
     return res
       .json({
-        status: "success",
+        success: true,
         message: "Register success",
         data: user,
       })
