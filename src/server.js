@@ -53,7 +53,7 @@ io.use((socket, next) => {
 io.on("connection", (socket) => {
   console.log(`A user ${socket.userId} connected`);
 
-  socket.on("joinRoom", async ({ roomId, userId }) => {
+  socket.on("joinRoom", async ({ roomId }) => {
     socket.join(roomId);
 
     const messages = await prisma.chat.findMany({
@@ -64,17 +64,21 @@ io.on("connection", (socket) => {
     io.to(roomId).emit("chatHistory", messages);
   });
 
-  socket.on("sendMessage", async ({ roomId, userId, message }) => {
-    const newMessage = await prisma.chat.create({
+  socket.on("sendMessage", async ({ roomId, message }) => {
+    await prisma.chat.create({
       data: {
         message,
         roomId,
-        userId,
+        userId: socket.userId,
       },
+    });
+
+    const messages = await prisma.chat.findMany({
+      where: { roomId },
       include: { user: true },
     });
 
-    io.to(roomId).emit("newMessage", newMessage);
+    io.in(roomId).emit("chatHistory", messages);
   });
 
   socket.on("disconnect", () => {
