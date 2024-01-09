@@ -42,7 +42,15 @@ export const loginService = async (data) => {
     userId: user.id,
   });
 
-  return { token, refreshToken, email: user.email };
+  const userReponse = {
+    id: user.id,
+    fullName: user.fullName,
+    email: user.email,
+    role: user.role,
+    createdAt: user.createdAt,
+  };
+
+  return { token, refreshToken, user: userReponse };
 };
 
 export const registerService = async (data) => {

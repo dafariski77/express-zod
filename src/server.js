@@ -8,6 +8,7 @@ import errorHandlerMiddleware from "./middlewares/handleError.js";
 import prisma from "./lib/prisma.js";
 import roomRoute from "./api/v1/room/room.route.js";
 import { isTokenValid } from "./lib/jwt.js";
+import cors from 'cors'
 
 dotenv.config();
 
@@ -16,6 +17,8 @@ const port = process.env.PORT || 9000;
 
 app.use(morgan("dev"));
 app.use(express.json());
+
+app.use(cors())
 
 app.use("/api/v1", userRoute);
 app.use("/api/v1", roomRoute);
