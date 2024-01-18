@@ -11,9 +11,7 @@ export const createUserRefreshToken = async (payload) => {
   return result;
 };
 
-export const getUserRefreshToken = async (req) => {
-  const { refreshToken } = req.params;
-
+export const getUserRefreshToken = async (refreshToken) => {
   const result = await prisma.refreshToken.findFirst({
     where: {
       refreshToken,
